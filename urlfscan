@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#Check if URL is given as parameter
+if [ -z ${1} ]; then
+	echo "Syntax: urlfscan <URL>"
+	exit 0
+fi
+
+#Check Terminal Size
+if ( $COLUMNS <= 50 ) then
+	echo "Terminal Size too low. Exiting..."
+	exit 0
+fi
+
+#Get work dir ready
+echo $(mkdir /tmp) > /dev/null;
+echo $(mkdir /tmp/urlfscan) > /dev/null;
+
+#Download Page to work dir
+echo "[*] Grabbing $1"
+wget -q "$1" -O /tmp/urlfscan/file.txt;
+
+#Check for string (pattern for angularjs files are used as example)
+echo  "Status: "
+if ( grep -e "angular.\..\..\.js" -e "angular.min.js" -q /tmp/urlfscan/file.txt) then 
+	echo "FOUND !!!";
+else
+	echo "Not Found";
+fi
+
+#Cleanup work dir
+echo $(rm -rf /tmp/urlfscan) > /dev/null;
